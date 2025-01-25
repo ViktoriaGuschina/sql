@@ -2,57 +2,36 @@ package ru.netology.data;
 
 import lombok.SneakyThrows;
 import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.handlers.BeanHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
-import ru.netology.mode.User;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 public class SQLHelper {
-    private static final QueryRunner runner = new QueryRunner();
+    private static QueryRunner runner = new QueryRunner();
 
     private SQLHelper() {
     }
 
-    private static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/app", "app", "pass");
+    private static Connection getConn() throws SQLException {
+        return DriverManager.getConnection("jdbc:mysql://localhost:3306/app", "app", "pass");
     }
 
     @SneakyThrows
-    public static void updateUsers(String login, String password) {
-        var dataSQL = "INSERT INTO users(login, password) VALUES (?, ?);";
-        try (var conn = getConnection()) {
-            runner.update(conn, dataSQL, login, password);
-        }
+    public static DataHelper.VerificationCode getVerificationCode() {
+        var codeSQL = "SELECT code FROM auth_codes ORDER BY created DESC LIMIT 1";
+        var conn = getConn();
+        var code = runner.query(conn, codeSQL, new ScalarHandler<String>());
+        return new DataHelper.VerificationCode(code);
     }
 
     @SneakyThrows
-    public static long countUsers() {
-        var countSQL = "SELECT COUNT(*) FROM users;";
-        try (var conn = getConnection()) {
-            return runner.query(conn, countSQL, new ScalarHandler<>());
-        }
+    public static void cleanDatabase() {
+        var connection = getConn();
+        runner.execute(connection, "DELETE FROM auth_codes");
+        runner.execute(connection, "DELETE FROM card_transactions");
+        runner.execute(connection, "DELETE FROM cards");
+        runner.execute(connection, "DELETE FROM users");
     }
-
-    @SneakyThrows
-    public static User getFirstUser() {
-        var usersSQL = "SELECT * FROM users;";
-        try (var conn = getConnection()) {
-            return runner.query(conn, usersSQL, new BeanHandler<>(User.class));
-        }
-    }
-
-    @SneakyThrows
-    public static List<User> getUsers() {
-        var usersSQL = "SELECT * FROM users;";
-        try (var conn = getConnection()) {
-            return runner.query(conn, usersSQL, new BeanListHandler<>(User.class));
-        }
-    }
-
 }
