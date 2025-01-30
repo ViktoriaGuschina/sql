@@ -16,6 +16,7 @@ import static ru.netology.data.SQLHelper.cleanAuthCodes;
 import static ru.netology.data.SQLHelper.cleanDatabase;
 
 public class AuthorizationBankTest {
+
     LoginPage loginPage;
     DataHelper.AuthInfo authInfo = DataHelper.getAuthInfoWithTestData();
 
