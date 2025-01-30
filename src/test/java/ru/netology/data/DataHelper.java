@@ -9,6 +9,7 @@ import com.github.javafaker.Faker;
 import java.util.Locale;
 
 public class DataHelper {
+
     private static final Faker faker = new Faker(new Locale("en"));
 
     private DataHelper() {
