@@ -53,10 +53,10 @@ public class AuthorizationBankTest {
 
     @Test
     @DisplayName("Should get error notification if login with exist in base and active user and random verification code")
-    void shouldErrorNotificationIfLoginWithExistUserAndRandomVerificationCode() {
-        var authInfo = DataHelper.getAuthInfoWithTestData();
-        loginPage.login(authInfo);
-        loginPage.verifyErrorNotificationVisiblity("Ошибка!" + "\nНеверно указан код! Попробуйте ещё раз.");
-
+    void shouldGetErrorNotificationIfLoginWithExistUserAndRandomVerificationCode() {
+        var verificationPage = loginPage.validLogin(authInfo);
+        var verificationCode = DataHelper.generateRandomVerificationCode();
+        verificationPage.verify(verificationCode.getCode());
+        verificationPage.verifyErrorNotification("Ошибка \nОшибка! Неверно указан код! Попробуйте ещё раз.");
     }
 }

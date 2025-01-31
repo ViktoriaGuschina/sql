@@ -17,7 +17,7 @@ public class VerificationPage {
     }
 
     public void verifyErrorNotification(String expectedText) {
-        errorNotification.shouldHave(exactText(expectedText)).shouldBe(visible);
+        errorNotification.shouldBe(exactText(expectedText)).shouldBe(visible);
     }
 
     public DashboardPage validVerify(String verificationCode) {
